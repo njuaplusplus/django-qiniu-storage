@@ -126,7 +126,8 @@ class QiniuStorage(Storage):
             content_str = content.read()
 
         self._put_file(name, content_str)
-        content.close()
+        # Comment it out because of a temporary file issue in django-imagekit
+        # content.close()
         return cleaned_name
 
     def _put_file(self, name, content):
@@ -221,7 +222,9 @@ class QiniuPrivateStorage(QiniuStorage):
 class QiniuFile(File):
     def __init__(self, name, storage, mode):
         self._storage = storage
-        self._name = name[len(self._storage.location):].lstrip('/')
+        # Comment it out because I think this truncation is wrong
+        # self._name = name[len(self._storage.location):].lstrip('/')
+        self._name = name
         self._mode = mode
         self.file = six.BytesIO()
         self._is_dirty = False
