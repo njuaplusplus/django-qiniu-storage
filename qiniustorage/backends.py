@@ -11,7 +11,7 @@ import six
 from six.moves import cStringIO as StringIO
 from six.moves.urllib_parse import urljoin, urlparse
 
-from qiniu import Auth, BucketManager, put_data
+from qiniu import Auth, BucketManager, put_data, Zone, set_default
 import requests
 
 from django.conf import settings
@@ -52,6 +52,10 @@ if isinstance(QINIU_SECURE_URL, six.string_types):
         QINIU_SECURE_URL = True
     else:
         QINIU_SECURE_URL = False
+
+
+# Set faster up host for foreign VPS
+set_default(default_zone=Zone('up.qiniug.com', 'up.qiniu.com'))
 
 
 class QiniuStorage(Storage):
@@ -224,7 +228,7 @@ class QiniuFile(File):
         self._storage = storage
         # Comment it out because I think this truncation is wrong
         # self._name = name[len(self._storage.location):].lstrip('/')
-        self._name = name
+        self._name = name.lstrip('/')
         self._mode = mode
         self.file = six.BytesIO()
         self._is_dirty = False
